@@ -3,11 +3,11 @@ ThisBuild / versionScheme     := Some("semver-spec")
 
 publish / skip := true
 
-lazy val typesetter = crossProject( /*JSPlatform,*/ JVMPlatform, NativePlatform)
+lazy val oql_core = crossProject( JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
-    name         := "typesetter",
-    version      := "0.0.18",
+    name         := "oql-core",
+    version      := "1.1.30",
     scalaVersion := "3.5.2",
     scalacOptions ++=
       Seq(
@@ -44,12 +44,12 @@ lazy val typesetter = crossProject( /*JSPlatform,*/ JVMPlatform, NativePlatform)
       "io.github.edadma" %%% "freetype" % "0.0.4",
     ),
   )
-//  .jsSettings(
-//    jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
-//    //    Test / scalaJSUseMainModuleInitializer := true,
-//    //    Test / scalaJSUseTestModuleInitializer := false,
-//    Test / scalaJSUseMainModuleInitializer      := false,
-//    Test / scalaJSUseTestModuleInitializer      := true,
-//    scalaJSUseMainModuleInitializer             := true,
-//    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
-//  )
+  .jsSettings(
+    jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
+    //    Test / scalaJSUseMainModuleInitializer := true,
+    //    Test / scalaJSUseTestModuleInitializer := false,
+    Test / scalaJSUseMainModuleInitializer      := false,
+    Test / scalaJSUseTestModuleInitializer      := true,
+    scalaJSUseMainModuleInitializer             := true,
+    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
+  )
