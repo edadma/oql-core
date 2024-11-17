@@ -4,7 +4,6 @@ import com.vinctus.oql.AbstractOQL.*
 
 import scala.collection.mutable.ArrayBuffer
 import scala.language.postfixOps
-import scala.scalajs.js
 
 object SQLQueryBuilder {
 

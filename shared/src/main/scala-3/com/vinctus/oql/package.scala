@@ -2,7 +2,6 @@ package com.vinctus
 
 import scala.annotation.tailrec
 import scala.collection.immutable.ArraySeq
-import scala.scalajs.js
 import scala.util.matching.Regex
 import scala.util.parsing.input.Position
 
