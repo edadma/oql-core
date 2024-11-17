@@ -1,9 +1,6 @@
 package com.vinctus.oql
 
-import com.vinctus.sjs_utils.fromJS
-
 import java.time.Instant
-import scala.scalajs.js
 
 object ScalaConversions extends Conversions {
 
