@@ -3,7 +3,7 @@ ThisBuild / versionScheme     := Some("semver-spec")
 
 publish / skip := true
 
-lazy val oql_core = crossProject( JSPlatform, JVMPlatform, NativePlatform)
+lazy val oql_core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
     name         := "oql-core",
@@ -23,17 +23,17 @@ lazy val oql_core = crossProject( JSPlatform, JVMPlatform, NativePlatform)
     githubOwner      := "vinctustech",
     githubRepository := name.value,
     libraryDependencies ++= Seq(
-      "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
+      "org.scalatest"          %%% "scalatest"                % "3.2.19" % "test",
       "org.scala-lang.modules" %%% "scala-parser-combinators" % "2.4.0",
 //      "com.lihaoyi" %%% "pprint" % "0.9.0" % "test",
     ),
     publishMavenStyle      := true,
     Test / publishArtifact := false,
     licenses += "ISC"      -> url("https://opensource.org/licenses/ISC"),
-)
+  )
   .jvmSettings(
     libraryDependencies ++= Seq(
-      "org.scala-js"           %% "scalajs-stubs" % "1.1.0"  % "provided",
+      "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
     ),
   )
   .nativeSettings(
@@ -49,6 +49,6 @@ lazy val oql_core = crossProject( JSPlatform, JVMPlatform, NativePlatform)
     Test / scalaJSUseTestModuleInitializer      := true,
     scalaJSUseMainModuleInitializer             := true,
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
-    libraryDependencies += "com.vinctus" %%% "sjs-utils" % "0.1.0-snapshot.33",
+    libraryDependencies += "com.vinctus"       %%% "sjs-utils"       % "0.1.0-snapshot.33",
   )
 lazy val oql_coreJS = oql_core.js.enablePlugins(ScalablyTypedConverterPlugin)
