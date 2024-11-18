@@ -1,1 +1,2 @@
 todo: target independent JSON handling
+todo: is ScalaJSResultBuilder really needed? probably not
