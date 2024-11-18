@@ -7,7 +7,7 @@ lazy val oql_core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
     name         := "oql-core",
-    version      := "0.0.2",
+    version      := "0.0.3",
     scalaVersion := "3.5.2",
     scalacOptions ++=
       Seq(

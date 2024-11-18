@@ -215,7 +215,7 @@ object AbstractOQL {
     })
   }
 
-  private[oql] def decorate(
+  def decorate(
       entity: Entity,
       expr: OQLExpression,
       model: DataModel,
