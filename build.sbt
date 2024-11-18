@@ -19,8 +19,9 @@ lazy val oql_core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:existentials",
         "-language:dynamics",
       ),
-    organization     := "com.vinctus",
-    githubOwner      := "vinctustech",
+    organization := "com.vinctus",
+    githubOwner  := "edadma", // this is temporary until the transfer of ownership
+    resolvers += "GitHub Packages" at "https://maven.pkg.github.com/vinctustech/sjs-utils",
     githubRepository := name.value,
     libraryDependencies ++= Seq(
       "org.scalatest"          %%% "scalatest"                % "3.2.19" % "test",
