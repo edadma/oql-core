@@ -6,18 +6,17 @@ import scala.collection.mutable.ArrayBuffer
 import scala.language.postfixOps
 
 object SQLQueryBuilder {
-
   val INDENT = 2
-
 }
 
 class SQLQueryBuilder(
-                       oql: String,
-                       ds: SQLDataSource,
-                       fixed: Fixed,
-                       model: DataModel,
-                       val margin: Int = 0,
-                       , subquery: Boolean = false) {
+    oql: String,
+    ds: SQLDataSource,
+    fixed: Fixed,
+    model: DataModel,
+    val margin: Int = 0,
+    subquery: Boolean = false,
+) {
 
   import SQLQueryBuilder.*
 
@@ -43,16 +42,16 @@ class SQLQueryBuilder(
     override def toString: String = query.toString.trim
   }
 
-  private var from: (String, Option[String]) = _
-  private val innerJoins = new ArrayBuffer[Join]
-  private val leftJoins = new ArrayBuffer[Join]
-  private var idx = 0
-  private val projects = new ArrayBuffer[Project]
-  private var where: Option[(String, OQLExpression)] = None
+  private var from: (String, Option[String])                = _
+  private val innerJoins                                    = new ArrayBuffer[Join]
+  private val leftJoins                                     = new ArrayBuffer[Join]
+  private var idx                                           = 0
+  private val projects                                      = new ArrayBuffer[Project]
+  private var where: Option[(String, OQLExpression)]        = None
   private var _group: Option[(String, List[OQLExpression])] = None
-  private var _order: Option[(String, List[OQLOrdering])] = None
-  private var _limit: Option[Int] = None
-  private var _offset: Option[Int] = None
+  private var _order: Option[(String, List[OQLOrdering])]   = None
+  private var _limit: Option[Int]                           = None
+  private var _offset: Option[Int]                          = None
 
   def table(name: String, alias: Option[String]): Unit = if (from eq null) from = (name, alias)
 
@@ -72,7 +71,7 @@ class SQLQueryBuilder(
   def offset(n: Int): Unit = _offset = Some(n)
 
   def projectValue(expr: OQLExpression, table: String): (Int, Boolean) = {
-    val cur = idx
+    val cur   = idx
     val typed = projectQuery && ds.typeFunction.isDefined && expr.typ == null
 
     projects += ValueProject(expr, table, typed)
@@ -170,9 +169,9 @@ class SQLQueryBuilder(
   private case class Join(t1: String, c1: String, t2: String, alias: String, c2: String)
 
   override def toString: String = {
-    val buf = new StringBuilder
+    val buf    = new StringBuilder
     var indent = margin
-    var first = true
+    var first  = true
 
     def line(s: String): Unit = {
       if (first && !subquery)

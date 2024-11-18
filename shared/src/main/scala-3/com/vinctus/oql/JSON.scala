@@ -6,14 +6,13 @@ import scala.annotation.tailrec
 import scala.collection.immutable.{ArraySeq, ListMap}
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.language.postfixOps
-import scala.scalajs.js
 
 object JSON {
 
   private val EOI = '\uE000'
   private val ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-  private var idx: Int = 0
+  private var idx: Int     = 0
   private var json: String = ""
 
   def next: Char =
@@ -37,7 +36,7 @@ object JSON {
   def chmatch(c: Char): Unit =
     if (ch != c)
       error(
-        if (c == EOI) "expected end of input" else s"expected '$c', but found '$prev':\n$json\n${(" " * idx) :+ '^'}"
+        if (c == EOI) "expected end of input" else s"expected '$c', but found '$prev':\n$json\n${(" " * idx) :+ '^'}",
       )
 
   def delim(c: Char): Unit = {
@@ -144,7 +143,7 @@ object JSON {
   }
 
   def readNumber: String = {
-    val buf = new StringBuilder
+    val buf     = new StringBuilder
     var c: Char = next
 
     while (c.isDigit || c == '.' || c == '-' || c == 'e' || c == 'E') {
@@ -193,9 +192,9 @@ object JSON {
       value: Any,
       platformSpecific: PartialFunction[Any, String],
       tab: Int = 2,
-      format: Boolean = false
+      format: Boolean = false,
   ): String = {
-    val buf = new StringBuilder
+    val buf   = new StringBuilder
     var level = 0
 
     def ln(): Unit =
@@ -242,13 +241,13 @@ object JSON {
       value match {
         case p if platformSpecific isDefinedAt p                     => buf ++= platformSpecific(p)
         case _: Number | _: java.math.BigDecimal | _: Boolean | null => buf ++= String.valueOf(value)
-        case m: collection.Map[_, _]           => jsonObject(m.toSeq.asInstanceOf[Seq[(String, Any)]])
-        case s: collection.Seq[_] if s.isEmpty => buf ++= "[]"
-        case s: collection.Seq[_]              => aggregate('[', s, ']')(jsonValue)
-        case a: Array[_]                       => jsonValue(a.toList)
-        case a: js.Array[_]                    => jsonValue(a.toList)
-        case p: Product                        => jsonObject(p.productElementNames zip p.productIterator toList)
-        case t: Instant                        => buf ++= '"' +: ISO.format(t.atOffset(ZoneOffset.UTC)) :+ '"'
+        case m: collection.Map[_, _]            => jsonObject(m.toSeq.asInstanceOf[Seq[(String, Any)]])
+        case s: collection.Seq[_] if s.isEmpty  => buf ++= "[]"
+        case s: collection.Seq[_]               => aggregate('[', s, ']')(jsonValue)
+        case a: Array[_]                        => jsonValue(a.toList)
+        case a if PlatformSpecific.isJsArray(a) => jsonValue(PlatformSpecific.jsArrayToSeq(a))
+        case p: Product                         => jsonObject(p.productElementNames zip p.productIterator toList)
+        case t: Instant                         => buf ++= '"' +: ISO.format(t.atOffset(ZoneOffset.UTC)) :+ '"'
 //        case t: Timestamp                      => jsonValue(t.toInstant.toString) //  | _: Instant  _: java.util.UUID
         case _: String =>
           buf += '"'
@@ -257,12 +256,9 @@ object JSON {
               case (acc, (c, r)) => acc.replace(c, r)
             }
           buf += '"'
-        case _: js.Object => jsonObject(value.asInstanceOf[js.Dictionary[Any]].toList)
-        case _ =>
-          js.typeOf(value) match {
-            case "bigint" => buf ++= String.valueOf(value)
-            case _        => buf ++= '"' +: String.valueOf(value) :+ '"'
-          }
+        case _ if PlatformSpecific.isJsObject(value)         => jsonObject(PlatformSpecific.jsDictionaryToSeq(value))
+        case _ if PlatformSpecific.typeOf(value) == "bigint" => buf ++= String.valueOf(value)
+        case _                                               => buf ++= '"' +: String.valueOf(value) :+ '"'
       }
 
     def jsonObject(pairs: Seq[(String, Any)]): Unit =

@@ -1,12 +1,8 @@
 package com.vinctus.oql
 
-//import com.vinctus.mappable.{Mappable, map2cc}
-import com.vinctus.sjs_utils.DynamicMap
-
 import scala.collection.immutable.VectorMap
 import scala.concurrent.Future
 import scala.language.postfixOps
-import scala.scalajs.js
 
 class Mutation private[oql] (oql: AbstractOQL, entity: Entity)(implicit ec: scala.concurrent.ExecutionContext) {
 
@@ -48,13 +44,13 @@ class Mutation private[oql] (oql: AbstractOQL, entity: Entity)(implicit ec: scal
     // check if object contains properties not defined for a entity
     if ((keyset diff allKeys).nonEmpty)
       sys.error(
-        s"insert(): found properties not defined for entity '${entity.name}': ${(keyset diff allKeys) map (p => s"'$p'") mkString ", "}"
+        s"insert(): found properties not defined for entity '${entity.name}': ${(keyset diff allKeys) map (p => s"'$p'") mkString ", "}",
       )
 
     // check if object contains all required column attribute properties
     if (!(attrsRequired subsetOf keyset))
       sys.error(
-        s"insert(): missing required properties for entity '${entity.name}': ${(attrsRequired diff keyset) map (p => s"'$p'") mkString ", "}"
+        s"insert(): missing required properties for entity '${entity.name}': ${(attrsRequired diff keyset) map (p => s"'$p'") mkString ", "}",
       )
 
     val command = new StringBuilder
@@ -69,8 +65,8 @@ class Mutation private[oql] (oql: AbstractOQL, entity: Entity)(implicit ec: scal
 
           List(
             k -> oql.render(
-              if (v.isInstanceOf[Map[_, _]]) v.asInstanceOf[Map[String, Any]](mtoEntity.pk.get.name) else v
-            )
+              if (v.isInstanceOf[Map[_, _]]) v.asInstanceOf[Map[String, Any]](mtoEntity.pk.get.name) else v,
+            ),
           )
         case (k, _) => if (attrsRequired(k)) sys.error(s"attribute '$k' is required") else Nil
       }
@@ -177,11 +173,11 @@ class Mutation private[oql] (oql: AbstractOQL, entity: Entity)(implicit ec: scal
     // check if object contains extrinsic attributes
     if ((keyset diff attrsNoPKKeys).nonEmpty)
       sys.error(
-        s"extrinsic properties not found in entity '${entity.name}': ${(keyset diff attrsNoPKKeys) map (p => s"'$p'") mkString ", "}"
+        s"extrinsic properties not found in entity '${entity.name}': ${(keyset diff attrsNoPKKeys) map (p => s"'$p'") mkString ", "}",
       )
 
     // removed properties with a value of undefined
-    val updatesWithoutUndefined = updates filterNot { case (_, v) => v == js.undefined }
+    val updatesWithoutUndefined = updates filterNot { case (_, v) => PlatformSpecific.isUndefined(v) }
 
     // check if updates is empty
     if (updatesWithoutUndefined.isEmpty)
@@ -260,13 +256,13 @@ class Mutation private[oql] (oql: AbstractOQL, entity: Entity)(implicit ec: scal
     // check if object contains extrinsic attributes
     if ((keyset diff attrsNoPKKeys).nonEmpty)
       sys.error(
-        s"extrinsic properties not found in entity '${entity.name}': ${(keyset diff attrsNoPKKeys) map (p => s"'$p'") mkString ", "}"
+        s"extrinsic properties not found in entity '${entity.name}': ${(keyset diff attrsNoPKKeys) map (p => s"'$p'") mkString ", "}",
       )
 
     val command = new StringBuilder
 
     // build update command
-    val keys = updates.head._2.keys
+    val keys    = updates.head._2.keys
     val columns = keys.map(k => attrsNoPK(k).column)
 
     command append s"UPDATE  ${entity.table}\n"
