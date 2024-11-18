@@ -14,7 +14,7 @@ object JSConversions extends Conversions {
 
   def decimal(n: String, precision: Int, scale: Int): Any = n.toDouble
 
-  def jsonNodePG(v: String): Any = js.JSON.parse(v)
+//  def jsonNodePG(v: String): Any = js.JSON.parse(v)   // todo: target independent JSON handling
 
   def jsonSequence(v: Any): Any = toJS(v)
 }
