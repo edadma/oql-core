@@ -4,7 +4,7 @@ import scala.collection.immutable.VectorMap
 import scala.concurrent.Future
 import scala.language.postfixOps
 
-class Mutation private[oql] (oql: AbstractOQL, entity: Entity)(implicit ec: scala.concurrent.ExecutionContext) {
+class Mutation(oql: AbstractOQL, entity: Entity)(implicit ec: scala.concurrent.ExecutionContext) {
 
 //  def insert[T <: Product: Mappable](obj: T): Future[T] =
 //    insert(implicitly[Mappable[T]].toMap(obj)) map map2cc[T] //implicitly[Mappable[T]].fromMap(m))
