@@ -1,7 +1,5 @@
 package com.vinctus.oql
 
-import scala.scalajs.js
-
 abstract class Conversions {
 
   def timestamp(t: String): Any
