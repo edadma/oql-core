@@ -1,11 +1,8 @@
 package com.vinctus.oql
 
-import com.vinctus.sjs_utils.DynamicMap
-
 import scala.collection.mutable
 import scala.compiletime.uninitialized
 import scala.concurrent.Future
-import scala.scalajs.js
 
 abstract class AbstractOQL(dm: String, val ds: SQLDataSource, conv: Conversions)(implicit
     ec: scala.concurrent.ExecutionContext,
@@ -85,11 +82,11 @@ abstract class AbstractOQL(dm: String, val ds: SQLDataSource, conv: Conversions)
 
   private[oql] def exec: Boolean = !_transpileOnly
 
-  def queryOne(q: OQLQuery, oql: String, fixed: Fixed): Future[Option[DynamicMap]] =
-    queryMany(q, oql, () => new ScalaJSResultBuilder, fixed) map {
+  def queryOne(q: OQLQuery, oql: String, fixed: Fixed): Future[Option[Map[String, Any]]] =
+    queryMany(q, oql, () => new ScalaPlainResultBuilder, fixed) map { // todo: this was using ScalaJSResultBuilder
       _.arrayResult match {
         case Nil       => None
-        case List(row) => Some(row.asInstanceOf[DynamicMap])
+        case List(row) => Some(row.asInstanceOf[Map[String, Any]])
         case _         => sys.error(s"queryOne: more than one row was found")
       }
     }
